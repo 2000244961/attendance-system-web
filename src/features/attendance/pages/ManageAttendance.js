@@ -57,13 +57,16 @@ const ManageAttendance = () => {
                     } catch {}
                 }
                 // Fetch attendance data from backend
-                const data = await fetchAttendance({ startDate: startDate, endDate: endDate, section: selectedSection });
+                const data = await fetchAttendance({ 
+                    startDate: startDate || selectedDate, 
+                    endDate: endDate || selectedDate, 
+                    section: selectedSection 
+                });
 
                 // Allowed sections present in today's attendance records
                 const sectionSet = new Set();
                 data.forEach(record => {
                     if (
-                        new Date(record.date).toISOString().slice(0, 10) === selectedDate &&
                         record.section
                     ) {
                         sectionSet.add(record.section);
@@ -75,21 +78,19 @@ const ManageAttendance = () => {
                 const subjectSet = new Set();
                 data.forEach(record => {
                     if (
-                        new Date(record.date).toISOString().slice(0, 10) === selectedDate &&
-                        record.subject &&
-                        (!selectedSection || record.section === selectedSection)
+                        record.subject
                     ) {
                         subjectSet.add(record.subject);
                     }
                 });
                 setAllowedSubjects(Array.from(subjectSet));
 
-                // Show all records for allowed sections (including absent)
-                const filtered = data.filter(record =>
-                    new Date(record.date).toISOString().slice(0, 10) === selectedDate &&
-                    (allowedSectionsArr.length === 0 || allowedSectionsArr.includes(record.section))
-                );
-                setAttendanceData(data);
+                // Filter data for allowed sections if teacher has restricted access
+                const filtered = allowedSectionsArr.length > 0 
+                    ? data.filter(record => allowedSectionsArr.includes(record.section))
+                    : data;
+                    
+                setAttendanceData(filtered);
                 setLastUpdate(Date.now());
             } catch (err) {
                 setError('Failed to load attendance records');
@@ -112,12 +113,26 @@ const ManageAttendance = () => {
         return () => {
             socket.disconnect();
         };
-    }, [endDate, selectedSection]);
+    }, [selectedDate, startDate, endDate, selectedSection, selectedSubject]);
 
     // Filter attendance data (do NOT filter out absent records)
     const filteredAttendance = useMemo(() => {
         return attendanceData.filter(record => {
-            const matchesDate = new Date(record.date).toISOString().slice(0, 10) === selectedDate;
+            const recordDate = new Date(record.date).toISOString().slice(0, 10);
+            let matchesDate = true;
+            
+            // If date range is specified, filter by date range
+            if (startDate && endDate) {
+                matchesDate = recordDate >= startDate && recordDate <= endDate;
+            } else if (startDate) {
+                matchesDate = recordDate >= startDate;
+            } else if (endDate) {
+                matchesDate = recordDate <= endDate;
+            } else {
+                // If no date range specified, show today's records
+                matchesDate = recordDate === selectedDate;
+            }
+            
             const matchesSection = !selectedSection || record.section === selectedSection;
             const matchesSubject = !selectedSubject || record.subject === selectedSubject;
             const matchesSearch = !searchTerm ||
@@ -125,9 +140,9 @@ const ManageAttendance = () => {
                 (String(record.studentId).toLowerCase().includes(searchTerm.toLowerCase()));
             return matchesDate && matchesSection && matchesSubject && matchesSearch;
         });
-    }, [attendanceData, selectedSection, selectedSubject, searchTerm]);
+    }, [attendanceData, selectedDate, startDate, endDate, selectedSection, selectedSubject, searchTerm]);
 
-    // Summary statistics
+    // Summary statistics using filtered data
     const summary = useMemo(() => {
         const present = filteredAttendance.filter(r => (r.status && r.status.toLowerCase() === 'present')).length;
         const absent = filteredAttendance.filter(r => (r.status && r.status.toLowerCase() === 'absent')).length;
@@ -193,10 +208,10 @@ const ManageAttendance = () => {
         }
     };
 
-    // Group attendance records by studentId
+    // Group attendance records by studentId using filtered data
     const groupedAttendance = useMemo(() => {
         const map = new Map();
-        attendanceData.forEach(record => {
+        filteredAttendance.forEach(record => {
             if (!map.has(record.studentId)) {
                 map.set(record.studentId, {
                     studentId: record.studentId,
@@ -210,7 +225,7 @@ const ManageAttendance = () => {
             }
         });
         return Array.from(map.values());
-    }, [attendanceData]);
+    }, [filteredAttendance]);
 
     if (loading) return <div>Loading attendance records...</div>;
     if (error) return <div style={{ color: 'red' }}>{error}</div>;
@@ -304,7 +319,7 @@ const ManageAttendance = () => {
                         className="dashboard-btn"
                         style={{ background: '#38a169', color: '#fff', fontWeight: 700, borderRadius: 6, padding: '8px 18px', cursor: selectedSection && selectedSubject ? 'pointer' : 'not-allowed', opacity: selectedSection && selectedSubject ? 1 : 0.5, marginBottom: 0 }}
                         disabled={!selectedSection || !selectedSubject}
-                        onClick={() => exportAttendanceToExcel(attendanceData, selectedSection, selectedSubject)}
+                        onClick={() => exportAttendanceToExcel(filteredAttendance, selectedSection, selectedSubject)}
                     >
                         Export to Excel
                     </button>
@@ -365,7 +380,7 @@ const ManageAttendance = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {attendanceData.length > 0 ? (
+                            {groupedAttendance.length > 0 ? (
                                 groupedAttendance.map((student, idx) => (
                                     <React.Fragment key={student.studentId}>
                                         {student.records.map((record, recIdx) => (

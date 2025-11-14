@@ -9,6 +9,8 @@ import { fetchUserProfile } from '../../../api/userApi';
 const ManageAttendance = () => {
     const navigate = useNavigate();
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [selectedSection, setSelectedSection] = useState('');
     const [selectedSubject, setSelectedSubject] = useState('');
     const [allowedSubjects, setAllowedSubjects] = useState([]);
@@ -51,7 +53,7 @@ const ManageAttendance = () => {
                     } catch {}
                 }
                 // Fetch attendance data from backend
-                const data = await fetchAttendance({ date: selectedDate, section: selectedSection });
+                const data = await fetchAttendance({ startDate: startDate, endDate: endDate, section: selectedSection });
 
                 // Allowed sections present in today's attendance records
                 const sectionSet = new Set();
@@ -106,7 +108,7 @@ const ManageAttendance = () => {
         return () => {
             socket.disconnect();
         };
-    }, [selectedDate, selectedSection]);
+    }, [endDate, selectedSection]);
 
     // Filter attendance data (do NOT filter out absent records)
     const filteredAttendance = useMemo(() => {
@@ -222,23 +224,38 @@ const ManageAttendance = () => {
                     <h1 style={{ marginLeft: 0 }}>📋 Manage Attendance</h1>
                 </div>
             </div>
-            {/* Filters */}
-            <div className="filters-container">
-                <div className="filter-group">
-                    <label htmlFor="date">📆 View by Date:</label>
-                    <input
-                        type="date"
-                        id="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                    />
-                </div>
-                <div className="filter-group">
-                    <label htmlFor="section">🏫 Filter by Section:</label>
-                    <select
-                        id="section"
-                        value={selectedSection}
-                        onChange={(e) => {
+                        <div className="filters-container">
+                            <div className="filter-group">
+                                <label>📆 View by Date Range:</label>
+
+                                <div className="date-range">
+                                    <input
+                                        type="date"
+                                        id="start-date"
+                                        value={startDate}
+                                        max={new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' })}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                    />
+
+                                    <span style={{ margin: "0 8px" }}>to</span>
+
+                                    <input
+                                        type="date"
+                                        id="end-date"
+                                        value={endDate}
+                                        max={new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' })}
+                                        min={startDate} // prevent end date before start date
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <label htmlFor="section">🏫 Filter by Section:</label>
+                                <select
+                                    id="section"
+                                    value={selectedSection}
+                                    onChange={(e) => {
                             setSelectedSection(e.target.value);
                             setSelectedSubject('');
                         }}

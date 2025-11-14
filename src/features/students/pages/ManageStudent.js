@@ -150,12 +150,16 @@ const ManageStudent = ({ refreshDashboard }) => {
     const newBatch = batchStudentsFromFile
       .filter(s => s.fullName && s.studentId && s.section && s.gradeLevel)
       .map(s => ({
-        ...s,
-        descriptor: [],
-        photo: null,
-        status: 'Active',
-        _localOnly: true,
-      }));
+  fullName: String(s.fullName || '').trim(),
+  studentId: String(s.studentId || '').trim(),
+  section: String(s.section || '').trim(),
+  gradeLevel: String(s.gradeLevel || '').trim(),
+  descriptor: [],
+  photo: null,
+  status: 'Active',
+  _localOnly: true,
+}));
+
     const updatedBatch = [...batchStudents, ...newBatch];
     setBatchStudents(updatedBatch);
     saveBatchStudents(updatedBatch);
@@ -328,7 +332,7 @@ const ManageStudent = ({ refreshDashboard }) => {
           saveBatchStudents(updatedBatch);
           const dbStudents = await fetchStudents();
           setBackendStudents(dbStudents);
-          alert('Student updated and registered to backend!');
+          alert('Student updated and registered');
         } catch {
           alert('Failed to register student with photo.');
         }
@@ -395,8 +399,6 @@ const ManageStudent = ({ refreshDashboard }) => {
     <div className="manage-student-container redesigned-manage-student">
       <div className="header-section redesigned-header-section">
         <h1>Manage Students</h1>
-        <button onClick={handleBatchClick} style={{ marginBottom: 12 }}>📁 Batch Register</button>
-        <input type="file" ref={excelInputRef} accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleBatchUpload} />
       </div>
       <div style={{ display: 'flex', gap: 16, marginBottom: 24, alignItems: 'center' }}>
         <input
@@ -416,6 +418,20 @@ const ManageStudent = ({ refreshDashboard }) => {
             <option key={`section-${sec}-${idx}`} value={sec}>{sec}</option>
           ))}
         </select>
+        
+         <button className="batch-btn" onClick={handleBatchClick}>
+          📁 Batch Register
+        </button>
+
+        <input
+          type="file"
+          ref={excelInputRef}
+          accept=".xlsx,.xls"
+          style={{ display: 'none' }}
+          onChange={handleBatchUpload}
+        />
+
+
       </div>
       <div className="student-controls">
         <h2>{formMode === 'add' ? 'Add Student' : 'Edit Student'}</h2>
@@ -432,24 +448,28 @@ const ManageStudent = ({ refreshDashboard }) => {
             value={formData.studentId}
             onChange={e => handleInputChange('studentId', e.target.value)}
           />
-          <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+            
             <select
               name="section"
               value={formData.section}
               onChange={e => handleInputChange('section', e.target.value)}
               required
-              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+              style={{ padding: '8px'}}
             >
               <option key="form-select-section" value="">Select Section</option>
               {sectionList.map((section, idx) => (
                 <option key={`form-section-${section}-${idx}`} value={section}>{section}</option>
+                
               ))}
             </select>
+            </div>
+            <div>
             <select
               value={formData.gradeLevel}
               onChange={e => handleInputChange('gradeLevel', e.target.value)}
               required
-              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+              style={{ padding: '8px',  flex: 1 }}
             >
               <option value="">Select Grade Level</option>
               {[1, 2, 3, 4, 5, 6].map(grade => (
@@ -614,6 +634,7 @@ const ManageStudent = ({ refreshDashboard }) => {
                   : 'Save Changes'
               }
             </button>
+            
             {formMode === 'edit' && (
               <button onClick={resetForm} className="secondary-button">
                 Cancel

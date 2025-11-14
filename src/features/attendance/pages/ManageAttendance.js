@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import './styles/ManageAttendance.css';
 import { fetchAttendance, deleteAttendance, updateAttendance } from './attendanceApi';
 import { fetchUserProfile } from '../../../api/userApi';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+
+
 
 const ManageAttendance = () => {
     const navigate = useNavigate();
@@ -127,7 +131,8 @@ const ManageAttendance = () => {
     const summary = useMemo(() => {
         const present = filteredAttendance.filter(r => (r.status && r.status.toLowerCase() === 'present')).length;
         const absent = filteredAttendance.filter(r => (r.status && r.status.toLowerCase() === 'absent')).length;
-        return { present, absent, total: present + absent };
+        const late = filteredAttendance.filter(r => r.status && r.status.toLowerCase() === 'late').length;
+        return { present, absent, late, total: present + absent + late };
     }, [filteredAttendance]);
 
     // Update attendance status
@@ -306,7 +311,7 @@ const ManageAttendance = () => {
                 </div>
             </div>
             {/* Summary Cards */}
-            <div className="summary-container">
+           <div className="summary-container">
                 <div className="summary-card present">
                     <div className="summary-icon">✅</div>
                     <div className="summary-content">
@@ -319,6 +324,13 @@ const ManageAttendance = () => {
                     <div className="summary-content">
                         <h3>{summary.absent}</h3>
                         <p>Absent</p>
+                    </div>
+                </div>
+                <div className="summary-card late">
+                    <div className="summary-icon">⏰</div>
+                    <div className="summary-content">
+                        <h3>{summary.late}</h3>
+                        <p>Late</p>
                     </div>
                 </div>
                 <div className="summary-card total">

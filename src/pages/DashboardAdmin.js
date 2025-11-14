@@ -121,6 +121,16 @@ function DashboardAdmin() {
   // Announcement title state
   const [adminMessageTitle, setAdminMessageTitle] = useState("");
 
+  // Utility function to remove numbers
+// Only letters handler
+const handleLettersOnlyChange = (e) => {
+  const { name, value } = e.target;
+  // Keep only letters and spaces
+  const sanitizedValue = value.replace(/[^a-zA-Z\s]/g, '');
+  setAddUserForm(prev => ({ ...prev, [name]: sanitizedValue }));
+};
+
+
   // Handler for sending admin message (to be implemented)
   const handleSendAdminMessage = async (e) => {
   e.preventDefault();
@@ -1220,41 +1230,61 @@ setAnnouncements(res.data);
                     <form onSubmit={handleAddUserSubmit} className="add-user-form redesigned-add-user-form">
                       {/* Row 1: Name fields */}
                       <div className="form-row">
-                        <div className="form-group">
-                          <label>First Name<span style={{color:'red'}}>*</span></label>
-                          <input name="firstName" type="text" value={addUserForm.firstName} onChange={handleAddUserFormChange} required />
-                        </div>
-                        <div className="form-group">
-                          <label>Last Name<span style={{color:'red'}}>*</span></label>
-                          <input name="lastName" type="text" value={addUserForm.lastName} onChange={handleAddUserFormChange} required />
-                        </div>
-                        <div className="form-group">
-                          <label>Middle Name<span style={{color:'red'}}>*</span></label>
-                          <select
-                            name="middleNameSelect"
-                            value={addUserForm.middleName === '' ? '' : (addUserForm.middleName === 'N/A' ? 'N/A' : 'custom')}
-                            onChange={e => {
-                              if (e.target.value === 'N/A') {
-                                setAddUserForm(prev => ({ ...prev, middleName: 'N/A' }));
-                              } else {
-                                setAddUserForm(prev => ({ ...prev, middleName: '' }));
-                              }
-                            }}
-                            required
-                          >
-                            <option value="">Enter Middle Name</option>
-                            <option value="N/A">N/A</option>
-                          </select>
-                          <input
-                            name="middleName"
-                            type="text"
-                            value={addUserForm.middleName !== 'N/A' ? addUserForm.middleName : ''}
-                            onChange={e => setAddUserForm(prev => ({ ...prev, middleName: e.target.value }))}
-                            placeholder="Enter middle name or select N/A"
-                            disabled={addUserForm.middleName === 'N/A'}
-                            required={addUserForm.middleName !== 'N/A'}
-                          />
-                        </div>
+                       <div className="form-group">
+  <label>First Name<span style={{color:'red'}}>*</span></label>
+  <input
+    name="firstName"
+    type="text"
+    value={addUserForm.firstName}
+    onChange={handleLettersOnlyChange}
+    required
+  />
+</div>
+
+<div className="form-group">
+  <label>Last Name<span style={{color:'red'}}>*</span></label>
+  <input
+    name="lastName"
+    type="text"
+    value={addUserForm.lastName}
+    onChange={handleLettersOnlyChange}
+    required
+  />
+</div>
+<div className="form-group">
+<label>Middle Name<span style={{color:'red'}}>*</span></label>
+  <select
+    name="middleNameSelect"
+    value={addUserForm.middleName === 'N/A' ? 'N/A' : addUserForm.middleName ? 'custom' : ''}
+    onChange={e => {
+      if (e.target.value === 'N/A') {
+        setAddUserForm(prev => ({ ...prev, middleName: 'N/A' }));
+      } else {
+        setAddUserForm(prev => ({ ...prev, middleName: '' }));
+      }
+    }}
+    required
+  >
+    <option value="">Enter Middle Name</option>
+    <option value="N/A">N/A</option>
+    <option value="custom">Custom</option>
+  </select>
+
+  <input
+    name="middleName"
+    type="text"
+    value={addUserForm.middleName !== 'N/A' ? addUserForm.middleName : ''}
+    onChange={e => {
+      // Only letters allowed
+      const sanitizedValue = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+      setAddUserForm(prev => ({ ...prev, middleName: sanitizedValue }));
+    }}
+    placeholder="Enter middle name or select N/A"
+    disabled={addUserForm.middleName === 'N/A'}
+    required={addUserForm.middleName !== 'N/A'}
+  />
+</div>
+
                       </div>
                       {/* Row 2: Contact fields */}
                       <div className="form-row">

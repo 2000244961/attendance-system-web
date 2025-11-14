@@ -1,11 +1,10 @@
 // Basic attendance API for ManageAttendance
 
 // Fetch attendance records with optional date and section filters
-export async function fetchAttendance({ startDate, endDate, section } = {}) {
+export async function fetchAttendance({ date, section } = {}) {
   let url = `${process.env.REACT_APP_API_URL}/api/attendance`;
   const params = [];
-  if (startDate) params.push(`startDate=${encodeURIComponent(startDate)}`);
-  if (endDate) params.push(`endDate=${encodeURIComponent(endDate)}`);
+  if (date) params.push(`date=${encodeURIComponent(date)}`);
   if (section) params.push(`section=${encodeURIComponent(section)}`);
   if (params.length > 0) url += `?${params.join('&')}`;
 

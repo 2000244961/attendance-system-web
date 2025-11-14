@@ -85,7 +85,7 @@ const ManageAttendance = () => {
                     new Date(record.date).toISOString().slice(0, 10) === selectedDate &&
                     (allowedSectionsArr.length === 0 || allowedSectionsArr.includes(record.section))
                 );
-                setAttendanceData(filtered);
+                setAttendanceData(data);
                 setLastUpdate(Date.now());
             } catch (err) {
                 setError('Failed to load attendance records');
@@ -191,7 +191,7 @@ const ManageAttendance = () => {
     // Group attendance records by studentId
     const groupedAttendance = useMemo(() => {
         const map = new Map();
-        filteredAttendance.forEach(record => {
+        attendanceData.forEach(record => {
             if (!map.has(record.studentId)) {
                 map.set(record.studentId, {
                     studentId: record.studentId,
@@ -205,7 +205,7 @@ const ManageAttendance = () => {
             }
         });
         return Array.from(map.values());
-    }, [filteredAttendance]);
+    }, [attendanceData]);
 
     if (loading) return <div>Loading attendance records...</div>;
     if (error) return <div style={{ color: 'red' }}>{error}</div>;
@@ -353,7 +353,7 @@ const ManageAttendance = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {groupedAttendance.length > 0 ? (
+                            {attendanceData.length > 0 ? (
                                 groupedAttendance.map((student, idx) => (
                                     <React.Fragment key={student.studentId}>
                                         {student.records.map((record, recIdx) => (

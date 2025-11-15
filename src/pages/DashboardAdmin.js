@@ -1168,34 +1168,7 @@ setAnnouncements(res.data);
                         >
                           {present}
                         </text>
-                         {/* late Bar */}
-                        <rect
-                          x="30"
-                          y={barHeight - (present / max) * barHeight + 20}
-                          width="60"
-                          height={(present / max) * barHeight}
-                          fill="#38b2ac"
-                          rx="8"
-                        />
-                        <text
-                          x="60"
-                          y={barHeight + 35}
-                          textAnchor="middle"
-                          fontSize="15"
-                          fill="#010662"
-                        >
-                          late
-                        </text>
-                        <text
-                          x="60"
-                          y={barHeight - (present / max) * barHeight + 12}
-                          textAnchor="middle"
-                          fontSize="16"
-                          fontWeight="bold"
-                          fill="#222"
-                        >
-                          {present}
-                        </text>
+                        
                         {/* Absent Bar */}
                         <rect
                           x="130"

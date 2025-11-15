@@ -1127,7 +1127,9 @@ setAnnouncements(res.data);
                   {/* Attendance Bar Graph */}
                   <div style={{ width: '100%', maxWidth: 320, margin: '0 auto', padding: '16px 0' }}>
                     {(() => {
+                      //cahnges here
                       const present = attendanceData.present || 0;
+                      const late = attendanceData.late || 0;
                       const absent = attendanceData.absent || 0;
                       const max = Math.max(present, absent, 1);
                       const barHeight = 80;

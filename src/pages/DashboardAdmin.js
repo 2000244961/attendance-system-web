@@ -1140,9 +1140,9 @@ setAnnouncements(res.data);
                           <text x="60" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">Present</text>
                           <text x="60" y={barHeight - (present / max) * barHeight + 12} textAnchor="middle" fontSize="16" fontWeight="bold" fill="#222">{present}</text>
                            {/* Late Bar */}
-                          <rect x="30" y={barHeight - (late / max) * barHeight + 20} width="60" height={(late / max) * barHeight} fill="#38b2ac" rx="8" />
-                          <text x="60" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">late</text>
-                          <text x="60" y={barHeight - (late / max) * barHeight + 12} textAnchor="middle" fontSize="16" fontWeight="bold" fill="#222">{late}</text>
+                          <rect x="80" y={barHeight - (late / max) * barHeight + 20} width="60" height={(late / max) * barHeight} fill="#38b2ac" rx="8" />
+                          <text x="110" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">late</text>
+                          <text x="110" y={barHeight - (late / max) * barHeight + 12} textAnchor="middle" fontSize="16" fontWeight="bold" fill="#222">{late}</text>
                           {/* Absent Bar */}
                           <rect x="130" y={barHeight - (absent / max) * barHeight + 20} width="60" height={(absent / max) * barHeight} fill="#ff4757" rx="8" />
                           <text x="160" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">Absent</text>

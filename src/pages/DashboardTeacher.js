@@ -21,24 +21,26 @@ import axios from 'axios';
 
 // Today's Attendance Summary component for dashboard overview
 function TodayAttendanceSummary({ studentsInSections }) {
-	const [summary, setSummary] = useState({ present: 0, absent: 0 });
+	const [summary, setSummary] = useState({ present: 0,late: 0, absent: 0 });
 	useEffect(() => {
 		fetchTodayAttendanceSummary()
 			.then((data) => {
 				setSummary({
 					present: data.present || 0,
+					late: data.late || 0,
 					absent: data.absent || 0,
 				});
 			})
-			.catch(() => setSummary({ present: 0, absent: 0 }));
+			.catch(() => setSummary({ present: 0,late: 0,absent: 0 }));
 	}, []);
 	return (
 		<div className="dashboard-card redesigned-card" style={{ background: '#ffeaea', border: '2px solid #010662', padding: '24px 18px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(1,6,98,0.08)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 220 }}>
 			<div className="dashboard-card-icon" style={{ fontSize: 32, color: '#010662', marginBottom: 8 }}>📝</div>
 			<div className="dashboard-card-title" style={{ fontWeight: 700, fontSize: 20, marginBottom: 8, color: '#010662' }}>Today's Attendance</div>
-			<AttendanceBarGraphSVG present={summary.present} absent={summary.absent} />
+			<AttendanceBarGraphSVG present={summary.present}late={summary.late} absent={summary.absent} />
 			<div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 220, marginTop: 8 }}>
 				<span style={{ color: '#38a169', fontWeight: 500 }}>Present: {summary.present}</span>
+				<span style={{ color: '#38a169', fontWeight: 500 }}>Late: {summary.late}</span>
 				<span style={{ color: '#ff4757', fontWeight: 500 }}>Absent: {summary.absent}</span>
 			</div>
 			<div className="dashboard-card-desc" style={{ marginTop: 8, color: '#222', fontSize: 15 }}>Attendance summary for today</div>
@@ -1072,9 +1074,9 @@ useEffect(() => {
 	
 // Teacher Overview Component
 function TeacherOverview({ dashboardData, onManageStudent, onManageAttendance, onManageSubjects, onFaceRecognition }) {
-	const [attendanceSummary, setAttendanceSummary] = useState({ present: 0, absent: 0, late: 0 });
+	const [attendanceSummary, setAttendanceSummary] = useState({ present: 0, late: 0, absent: 0 });
 	useEffect(() => {
-		fetchTodayAttendanceSummary().then(setAttendanceSummary).catch(() => setAttendanceSummary({ present: 0, absent: 0, late: 0 }));
+		fetchTodayAttendanceSummary().then(setAttendanceSummary).catch(() => setAttendanceSummary({ present: 0,late: 0,absent: 0 }));
 	}, []);
 	const [showProfile, setShowProfile] = useState(false);
 	return (

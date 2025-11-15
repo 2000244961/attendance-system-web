@@ -283,7 +283,7 @@ setAnnouncements(res.data);
   const [userCounts, setUserCounts] = useState({ teacher: 0, parent: 0, student: 0 });
 
   // Attendance summary for today (whole school)
-  const [attendanceData, setAttendanceData] = useState({ present: 0, absent: 0 });
+  const [attendanceData, setAttendanceData] = useState({ present: 0,late: 0, absent: 0 });
 
   // Add user modal state
   const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -600,7 +600,7 @@ setAnnouncements(res.data);
     fetchTodayAttendanceSummaryAll().then(data => {
       setAttendanceData(data);
     }).catch(() => {
-  setAttendanceData({ present: 0, absent: 0 });
+  setAttendanceData({ present: 0,late: 0, absent: 0 });
     });
     // Fetch section attendance for reports (default: today)
     fetchAttendanceBySection(reportDate).then(data => {
@@ -1139,6 +1139,10 @@ setAnnouncements(res.data);
                           <rect x="30" y={barHeight - (present / max) * barHeight + 20} width="60" height={(present / max) * barHeight} fill="#38b2ac" rx="8" />
                           <text x="60" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">Present</text>
                           <text x="60" y={barHeight - (present / max) * barHeight + 12} textAnchor="middle" fontSize="16" fontWeight="bold" fill="#222">{present}</text>
+                           {/* Late Bar */}
+                          <rect x="30" y={barHeight - (late / max) * barHeight + 20} width="60" height={(late / max) * barHeight} fill="#38b2ac" rx="8" />
+                          <text x="60" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">late</text>
+                          <text x="60" y={barHeight - (late / max) * barHeight + 12} textAnchor="middle" fontSize="16" fontWeight="bold" fill="#222">{late}</text>
                           {/* Absent Bar */}
                           <rect x="130" y={barHeight - (absent / max) * barHeight + 20} width="60" height={(absent / max) * barHeight} fill="#ff4757" rx="8" />
                           <text x="160" y={barHeight + 35} textAnchor="middle" fontSize="15" fill="#010662">Absent</text>
@@ -1175,10 +1179,11 @@ setAnnouncements(res.data);
                   if (!sectionAttendance || sectionAttendance.length === 0) return;
                   // Prepare worksheet data
                   const wsData = [
-                    ['Section', 'Present', 'Absent'],
+                    ['Section', 'Present','Late','Absent'],
                     ...sectionAttendance.map(sec => [
                       sec.section || sec.sectionName || '',
                       sec.present || 0,
+                      sec.late || 0,
                       sec.absent || 0
                     ])
                   ];
@@ -1194,6 +1199,7 @@ setAnnouncements(res.data);
                     <tr>
                       <th>Section</th>
                       <th>Present</th>
+                      <th>Late</th>
                       <th>Absent</th>
                     </tr>
                   </thead>
@@ -1205,6 +1211,7 @@ setAnnouncements(res.data);
                         <tr key={sec.section || idx}>
                           <td>{sec.section || sec.sectionName || `Section ${idx+1}`}</td>
                           <td>{sec.present || 0}</td>
+                          <td>{sec.late || 0}</td>                 
                           <td>{sec.absent || 0}</td>
                         </tr>
                       ))

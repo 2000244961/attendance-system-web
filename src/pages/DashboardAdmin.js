@@ -1171,9 +1171,9 @@ setAnnouncements(res.data);
                          {/* late Bar */}
                         <rect
                           x="30"
-                          y={barHeight - (late / max) * barHeight + 20}
+                          y={barHeight - (present / max) * barHeight + 20}
                           width="60"
-                          height={(late / max) * barHeight}
+                          height={(present / max) * barHeight}
                           fill="#38b2ac"
                           rx="8"
                         />

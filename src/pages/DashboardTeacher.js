@@ -34,18 +34,76 @@ function TodayAttendanceSummary({ studentsInSections }) {
 			.catch(() => setSummary({ present: 0,late: 0,absent: 0 }));
 	}, []);
 	return (
-		<div className="dashboard-card redesigned-card" style={{ background: '#ffeaea', border: '2px solid #010662', padding: '24px 18px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(1,6,98,0.08)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 220 }}>
-			<div className="dashboard-card-icon" style={{ fontSize: 32, color: '#010662', marginBottom: 8 }}>📝</div>
-			<div className="dashboard-card-title" style={{ fontWeight: 700, fontSize: 20, marginBottom: 8, color: '#010662' }}>Today's Attendance</div>
-			<AttendanceBarGraphSVG present={summary.present}late={summary.late} absent={summary.absent} />
-			<div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 220, marginTop: 8 }}>
-				<span style={{ color: '#38a169', fontWeight: 500 }}>Present: {summary.present}</span>
-				<span style={{ color: '#38a169', fontWeight: 500 }}>Late: {summary.late}</span>
-				<span style={{ color: '#ff4757', fontWeight: 500 }}>Absent: {summary.absent}</span>
-			</div>
-			<div className="dashboard-card-desc" style={{ marginTop: 8, color: '#222', fontSize: 15 }}>Attendance summary for today</div>
-		</div>
-	);
+  <div className="dashboard-card redesigned-card" style={{ 
+    background: '#ffeaea', 
+    border: '2px solid #010662', 
+    padding: '24px 18px', 
+    borderRadius: '16px', 
+    boxShadow: '0 2px 8px rgba(1,6,98,0.08)', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    gap: 12, 
+    minHeight: 220 
+  }}>
+    
+    <div className="dashboard-card-icon" style={{ fontSize: 32, color: '#010662', marginBottom: 8 }}>
+      📝
+    </div>
+
+    <div className="dashboard-card-title" style={{ fontWeight: 700, fontSize: 20, marginBottom: 8, color: '#010662' }}>
+      Today&apos;s Attendance
+    </div>
+
+    {/* LATE BAR GRAPH */}
+    <div style={{
+      width: '100%',
+      maxWidth: 260,
+      height: 12,
+      background: '#ffe0a3',
+      borderRadius: 6,
+      overflow: 'hidden'
+    }}>
+      <div style={{
+        width: `${summary.late > 0 ? summary.late : 2}%`,
+        background: '#FFA500',
+        height: '100%',
+        borderRadius: 6
+      }}></div>
+    </div>
+
+    <AttendanceBarGraphSVG 
+      present={summary.present} 
+      late={summary.late} 
+      absent={summary.absent} 
+    />
+
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      width: '100%', 
+      maxWidth: 220, 
+      marginTop: 8 
+    }}>
+      <span style={{ color: '#38a169', fontWeight: 500 }}>
+        Present: {summary.present}
+      </span>
+      <span style={{ color: '#FFA500', fontWeight: 500 }}>
+        Late: {summary.late}
+      </span>
+      <span style={{ color: '#ff4757', fontWeight: 500 }}>
+        Absent: {summary.absent}
+      </span>
+    </div>
+
+    <div className="dashboard-card-desc" style={{ marginTop: 8, color: '#222', fontSize: 15 }}>
+      Attendance summary for today
+    </div>
+
+  </div>
+);
+
 }
 
 

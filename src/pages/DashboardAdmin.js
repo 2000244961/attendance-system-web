@@ -1294,7 +1294,7 @@ setAnnouncements(res.data);
                         </div>
                         <div className="form-group">
                           <label>Contact Number</label>
-                          <input name="contact" type="text" value={addUserForm.contact} onChange={handleAddUserFormChange} />
+                          <input name="contact" type="text" value={addUserForm.contact} maxLength={11} onChange={handleAddUserFormChange} />
                         </div>
                         {addUserRole !== 'parent' && (
                           <div className="form-group">

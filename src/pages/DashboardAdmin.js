@@ -1131,13 +1131,13 @@ setAnnouncements(res.data);
                       const present = attendanceData.present || 0;
                       const late = attendanceData.late || 0;
                       const absent = attendanceData.absent || 0;
-                      const max = Math.max(present, absent, 1);
+                      const max = Math.max(present,late, absent, 1);
                       const barHeight = 80;
                       return (
                        <svg
   width="100%"
   height={barHeight + 40}
-  viewBox={0 0 200 ${barHeight + 40}}
+  viewBox={`0 0 200 ${barHeight + 40}}
   style={{ display: 'block', margin: '0 auto' }}
 >
 
@@ -1176,7 +1176,7 @@ setAnnouncements(res.data);
     y={barHeight - (late / max) * barHeight + 20}
     width="60"
     height={(late / max) * barHeight}
-    fill="#38b2ac"
+    fill="#FFA500"
     rx="8"
   />
   <text
